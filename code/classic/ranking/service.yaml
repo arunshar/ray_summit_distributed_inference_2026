@@ -15,9 +15,11 @@ image_uri: anyscale/ray:2.56.0-slim-py312
 # Uploaded as the working directory; `import_path` is resolved from here.
 working_dir: .
 
+# Pinned for reproducibility (previously unpinned). Versions chosen to match the
+# anyscale/ray:2.56.0 image era; bump both together when the image tag changes.
 requirements:
-  - torch        # the two-tower model
-  - pydantic     # request/response validation
+  - torch==2.13.0      # the two-tower model
+  - pydantic==2.13.4   # request/response validation
 
 applications:
   - name: ranker

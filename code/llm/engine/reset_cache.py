@@ -1,3 +1,6 @@
+# WARNING: this file imports private ray.llm._internal APIs (DevIngress and
+# broadcast). They are not public and carry no compatibility guarantee. Their
+# behavior here is pinned to Ray 2.56.0 and may break on any other version.
 """Measure the vLLM prefix cache: warm replay vs cold replay after a reset.
 
 This makes the KV prefix cache visible. Send the same long prompt twice and the

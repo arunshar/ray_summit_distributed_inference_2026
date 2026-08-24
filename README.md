@@ -2,6 +2,11 @@
 
 © 2026, Anyscale. All Rights Reserved
 
+## Provenance
+
+Ray Summit 2026 Anyscale course material, republished with permission. Original content
+copyright 2026 Anyscale.
+
 Serve high-throughput, low-latency inference on Ray Serve, from a classic ML model to a
 distributed LLM. Each notebook is self-contained and defines every helper it needs, so you can
 open any one of them and run it top to bottom.
@@ -16,8 +21,15 @@ open any one of them and run it top to bottom.
 | 04 | [Inside the inference engine](04_inside_the_inference_engine.ipynb) | TTFT and ITL, the KV cache, paged attention, prefix caching, continuous batching, chunked prefill |
 | 05 | [Scaling LLM inference](05_scaling_llm_inference.ipynb) | KV-cache-aware routing, prefill/decode disaggregation, mixture-of-experts at scale |
 
-Notebooks 03 and 04 need one GPU; the rest run on CPU. Runnable cells use a small model, while the
-multi-node production configs appear as read-only blocks and as `code/**/service_prod*.yaml`.
+Notebooks 03 and 04 need one GPU. Notebook 05 and every example under `code/llm/` additionally
+need the `anyscale/ray-llm` image, because `ray.serve.llm` runs on vLLM, even where the GPU count
+is low; [code/README.md](code/README.md) documents each example's GPU needs. Notebooks 01 and 02
+run on CPU. Runnable cells use a small model, while the multi-node production configs appear as
+read-only blocks and as `code/**/service_prod*.yaml`.
+
+Cost warning: the `service_prod.yaml` files for serving, disaggregation, and expert parallelism
+request p5.48xlarge fleets (8x H100 per node, up to 24 nodes for disaggregation). They are
+read-only references, not configs to deploy casually.
 
 ## Also here
 

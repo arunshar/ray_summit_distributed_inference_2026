@@ -1,0 +1,27 @@
+# Python dependencies for this course, pinned to the Ray release the course targets.
+#
+# The canonical runtime is an Anyscale image, which carries Ray and the CUDA stack:
+#   - code/llm/**      -> anyscale/ray-llm:2.56.0-py312-cu130
+#   - code/classic/**  -> anyscale/ray:2.56.0-slim-py312
+# Before this file existed, Ray was not pinned as a pip requirement anywhere in the
+# repo; the version lived only in those image tags. This file makes the pin explicit
+# for local (CPU) work outside the images.
+#
+# fastapi is capped below 0.140: starting at fastapi 0.140.0 the FastAPI app object
+# holds a _thread.lock that Ray 2.56.0's serve.ingress cannot cloudpickle, so every
+# @serve.ingress module fails at import. Verified by bisection (0.139.0 OK, 0.140.0 fails).
+
+ray[serve]==2.56.0
+
+# Observed third-party imports under code/ and in the notebooks.
+fastapi>=0.133.0,<0.140
+pydantic
+httpx
+openai
+numpy
+requests
+psutil
+locust
+torch          # classic/ranking two-tower model, stream_processing, ops/debugging
+boto3          # classic/stream_processing (SQS + S3)
+diffusers      # classic/stream_processing image model
