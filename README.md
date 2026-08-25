@@ -66,6 +66,41 @@ cloudpickle, so every `@serve.ingress` module fails at import, and that the boun
 bisection at 0.139.0 working and 0.140.0 failing. That bisection was not reproduced for this
 README.
 
+## Committed notebook state
+
+All five notebooks ship completely unexecuted. Every code cell in the repository has
+`execution_count: null` and an empty `outputs` list, so no cell was run before commit and no
+recorded output survives in the files. You get the code and the prose around it. You do not get
+evidence that any of it ran.
+
+| Notebook | Code cells | Cells with `execution_count` set | Cells with stored output |
+|---|---|---|---|
+| `01_ray_serve_fundamentals.ipynb` | 36 | 0 | 0 |
+| `02_architecture_fault_tolerance_scaling.ipynb` | 24 | 0 | 0 |
+| `03_ray_serve_llm_framework.ipynb` | 7 | 0 | 0 |
+| `04_inside_the_inference_engine.ipynb` | 6 | 0 | 0 |
+| `05_scaling_llm_inference.ipynb` | 3 | 0 | 0 |
+
+Those counts come from parsing the five `.ipynb` files as JSON. Re-check them yourself, from the
+repository root:
+
+```bash
+python - <<'PY'
+import glob, json
+
+for path in sorted(glob.glob("*.ipynb")):
+    cells = json.load(open(path))["cells"]
+    code = [c for c in cells if c["cell_type"] == "code"]
+    ran = [c for c in code if c.get("execution_count") is not None]
+    out = [c for c in code if c.get("outputs")]
+    print(f"{path}: code={len(code)} executed={len(ran)} with_output={len(out)}")
+PY
+```
+
+Two smaller facts from the same parse. All five files are nbformat 4.5, and all five point at the
+kernel named `python3`, though notebook 02 gives that kernel the display name `base` while the
+other four call it `Python 3`.
+
 ## Also here
 
 - **`code/`** holds deployable versions of the apps the notebooks build, grouped by concept under
