@@ -9,7 +9,9 @@ copyright 2026 Anyscale.
 
 Serve high-throughput, low-latency inference on Ray Serve, from a classic ML model to a
 distributed LLM. Each notebook is self-contained and defines every helper it needs, so you can
-open any one of them and run it top to bottom.
+open any one of them without loading the others first. None of them ship executed, and none
+were run here, so treat top-to-bottom execution as the intended design rather than an
+observed result. See Committed notebook state below.
 
 ## Agenda
 
@@ -35,7 +37,7 @@ read-only references, not configs to deploy casually.
 
 ## Environment
 
-### Tested configuration
+### Declared configuration
 
 Nothing in this repository was executed to produce this table. Every value below is the
 configuration the repo *declares*, read out of the `image_uri` lines in the service YAMLs and the
