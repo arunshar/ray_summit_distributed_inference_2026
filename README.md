@@ -46,7 +46,7 @@ here.
 |---|---|
 | Ray | `ray[serve]==2.56.0` |
 | LLM image, for `code/llm/**` and notebooks 03 to 05 | `anyscale/ray-llm:2.56.0-py312-cu130` |
-| CPU image, for `code/classic/**` and `code/ops/tracing/` | `anyscale/ray:2.56.0-slim-py312` |
+| CPU image, for `code/classic/**` other than `stream_processing/`, and for `code/ops/tracing/` | `anyscale/ray:2.56.0-slim-py312` |
 | GPU image, for `code/classic/stream_processing/` | `anyscale/ray:2.56.0-py312-cu125` |
 | Python | 3.12, read from the `py312` suffix that every image tag carries |
 | CUDA | not written as a number anywhere in the repo. The tags end in `cu130` for `ray-llm` and `cu125` for the stream-processing image |
