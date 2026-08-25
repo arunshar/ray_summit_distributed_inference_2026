@@ -106,3 +106,46 @@ other four call it `Python 3`.
 - **`code/`** holds deployable versions of the apps the notebooks build, grouped by concept under
   `llm/`, `classic/`, and `ops/`. Each concept directory is self-contained: run or deploy from inside
   it. See [code/README.md](code/README.md).
+
+## A note on scope
+
+What this repository is, and what it is not, so you know what you are picking up.
+
+**The notebooks are unexecuted.** See [Committed notebook state](#committed-notebook-state) above.
+Reading them teaches the material. Running them needs the cluster described below, and nobody ran
+them before they were committed.
+
+**The `code/llm/` examples need the `ray-llm` image.** `ray.serve.llm` runs on vLLM, which the
+plain `anyscale/ray` image does not carry, so the import fails there before a deployment ever
+starts. The files that reach for the LLM stack are `serving/app.py`, `serving/multimodel.py`,
+`composition/app.py`, `routing/app.py`, `routing/verify.py`, `disaggregation/app.py`,
+`expert_parallel/app.py`, and `engine/reset_cache.py` under `code/llm/`, plus
+`offline_inference/batch_infer.py`, which imports `ray.data.llm` rather than `ray.serve.llm`. The
+two client scripts in that tree, `serving/query.py` and `engine/load_test.py`, only speak HTTP to
+an endpoint, so they run anywhere.
+
+**The `service_prod.yaml` files are reference material, not configs to deploy casually.** Each
+asks for a fleet of `p5.48xlarge` workers, described in the files' own comments as 8x H100 per
+node:
+
+| Config | Worker nodes | Model it names | Parallelism it declares |
+|---|---|---|---|
+| `code/llm/serving/service_prod.yaml` | `p5.48xlarge`, 1 to 4 | `meta-llama/Llama-3.1-70B-Instruct` | tensor parallel 8 |
+| `code/llm/disaggregation/service_prod.yaml` | `p5.48xlarge`, 6 to 24 | `moonshotai/Kimi-K2-Instruct` | pipeline parallel 2, tensor parallel 8, KV moved over NIXL |
+| `code/llm/expert_parallel/service_prod.yaml` | `p5.48xlarge`, 16 fixed | `deepseek-ai/DeepSeek-V3` | data parallel 16, tensor parallel 8, expert parallel on |
+
+Read those numbers before you run `anyscale service deploy` on any of them. The disaggregation
+config starts at six nodes rather than scaling up from one. The expert-parallel config sets
+`min_nodes` equal to `max_nodes` at 16, so it never scales down. None of the three was deployed to
+produce this README, and the repository records no cost figure for any of them.
+
+**`code/llm/engine/reset_cache.py` depends on private APIs.** It imports `build_dev_openai_app`
+from `ray.llm._internal.serve.core.ingress.dev_ingress` and `broadcast` from
+`ray.llm._internal.serve.utils.broadcast`. The file's own header says those carry no
+compatibility guarantee and that their behavior is pinned to Ray 2.56.0, so treat the script as
+tied to that one release. Nothing else in the repository reaches into `ray.llm._internal`.
+
+**There is no test suite, no CI configuration, and no lockfile.** The tracked files are the five
+notebooks, the `code/` tree, this README and `code/README.md`, `requirements.txt`, `.gitignore`,
+and `.anyscaleignore`. Nothing in the repository verifies itself, so every claim in it, including
+the ones on this page, rests on reading the source.
