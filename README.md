@@ -21,10 +21,12 @@ open any one of them and run it top to bottom.
 | 04 | [Inside the inference engine](04_inside_the_inference_engine.ipynb) | TTFT and ITL, the KV cache, paged attention, prefix caching, continuous batching, chunked prefill |
 | 05 | [Scaling LLM inference](05_scaling_llm_inference.ipynb) | KV-cache-aware routing, prefill/decode disaggregation, mixture-of-experts at scale |
 
-Notebooks 03 and 04 need one GPU. Notebook 05 and every example under `code/llm/` additionally
-need the `anyscale/ray-llm` image, because `ray.serve.llm` runs on vLLM, even where the GPU count
-is low; [code/README.md](code/README.md) documents each example's GPU needs. Notebooks 01 and 02
-run on CPU. Runnable cells use a small model, while the multi-node production configs appear as
+Notebooks 03, 04 and 05 all import `ray.serve.llm`, so each one needs the `anyscale/ray-llm`
+image, which carries vLLM. The plain `anyscale/ray` image fails at the import. 03 and 04 run
+on one GPU; 05 covers multi-GPU routing and disaggregation. Every example under `code/llm/`
+needs that same image. Notebooks 01 and 02 run on CPU. [code/README.md](code/README.md)
+describes what each example does and gives a GPU count where the example needs more than the
+Tier-1 default of one to two GPUs. Runnable cells use a small model, while the multi-node production configs appear as
 read-only blocks and as `code/**/service_prod*.yaml`.
 
 Cost warning: the `service_prod.yaml` files for serving, disaggregation, and expert parallelism
